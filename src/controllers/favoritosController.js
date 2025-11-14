@@ -31,3 +31,22 @@ export async function removerFavorito(req, res) {
     res.status(500).json({ msg: "Erro ao remover favorito" });
   }
 }
+
+export async function listarFavoritosPorUsuario(req, res) {
+  try {
+    const { id } = req.params;
+    const [favoritos] = await db.query(
+      `
+      SELECT f.id, f.usuario_id, f.livro_id, l.titulo, l.autor
+      FROM favoritos f
+      JOIN livros l ON f.livro_id = l.id
+      WHERE f.usuario_id = ?
+      `,
+      [id]
+    );
+
+    res.status(200).json(favoritos);
+  } catch (erro) {
+    res.status(500).json({ msg: "Erro ao listar favoritos do usuário" });
+  }
+}
